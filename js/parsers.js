@@ -133,13 +133,25 @@ export function parseStatement(text, { bank, refYM }) {
 }
 
 // extrai texto de um PDF usando pdf.js (carregado sob demanda)
-export async function extractPdfText(arrayBuffer) {
+// password: senha do PDF protegido (opcional). Lança {needsPassword:true} se
+// o PDF for protegido e a senha estiver ausente ou incorreta.
+export async function extractPdfText(arrayBuffer, password) {
   if (!window.pdfjsLib) {
-    await loadScript('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js');
-    window.pdfjsLib.GlobalWorkerOptions.workerSrc =
-      'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    await loadScript('./vendor/pdf.min.js'); // pdf.js embutido no repo (funciona offline)
+    window.pdfjsLib.GlobalWorkerOptions.workerSrc = './vendor/pdf.worker.min.js';
   }
-  const pdf = await window.pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+  let pdf;
+  try {
+    pdf = await window.pdfjsLib.getDocument({ data: arrayBuffer, password: password || undefined }).promise;
+  } catch (e) {
+    if (e && e.name === 'PasswordException') {
+      const err = new Error(password ? 'Senha incorreta para este PDF.' : 'Este PDF é protegido por senha.');
+      err.needsPassword = true;
+      err.wrongPassword = !!password;
+      throw err;
+    }
+    throw e;
+  }
   let out = [];
   for (let p = 1; p <= pdf.numPages; p++) {
     const page = await pdf.getPage(p);

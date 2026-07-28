@@ -1,12 +1,12 @@
 // sw.js — cache do app shell para uso offline
-const CACHE = 'finapp-v2';
+const CACHE = 'finapp-v3';
 const SHELL = [
   './', './index.html', './css/styles.css', './manifest.json',
   './js/app.js', './js/store.js', './js/github.js', './js/util.js',
   './js/parsers.js', './js/charts.js',
   './js/views/dashboard.js', './js/views/transactions.js', './js/views/invoice.js',
   './js/views/investments.js', './js/views/reports.js', './js/views/settings.js',
-  './data/data.sample.json', './icons/icon.svg', './icons/icon-192.png', './icons/icon-512.png'
+  './data/data.sample.json', './vendor/pdf.min.js', './vendor/pdf.worker.min.js', './icons/icon.svg', './icons/icon-192.png', './icons/icon-512.png'
 ];
 
 self.addEventListener('install', (e) => {

@@ -20,6 +20,8 @@ export function renderInvoice(main) {
       </div>
       <div class="drop" id="ivDrop">📄 Toque para escolher o <b>PDF da fatura</b> ou arraste-o aqui</div>
       <input type="file" id="ivFile" accept="application/pdf" class="hidden">
+      <label class="field hidden" id="ivPassWrap"><span>Senha do PDF (fatura protegida — a senha é usada só no seu navegador)</span>
+        <input id="ivPass" type="password" autocomplete="off" placeholder="geralmente CPF ou data de nascimento, conforme o banco"></label>
       <label class="field"><span>…ou cole o texto da fatura</span>
         <textarea id="ivText" rows="5" placeholder="12/06  IFOOD *RESTAURANTE   45,90&#10;15/06  MERCADO ANGELONI 02/05   199,90&#10;…"></textarea></label>
       <div class="btn-row">
@@ -49,6 +51,11 @@ export function renderInvoice(main) {
     if (f) await handlePdf(f, el, status);
   };
   fileInput.onchange = async () => { if (fileInput.files[0]) await handlePdf(fileInput.files[0], el, status); };
+  // reprocessa o PDF quando a senha for informada (Enter ou blur)
+  const pass = el.querySelector('#ivPass');
+  const retryWithPass = async () => { if (lastPdfFile && pass.value) await handlePdf(lastPdfFile, el, status); };
+  pass.addEventListener('keydown', (e) => { if (e.key === 'Enter') retryWithPass(); });
+  pass.addEventListener('blur', retryWithPass);
 
   el.querySelector('#ivParse').onclick = () => {
     const text = el.querySelector('#ivText').value;
@@ -62,15 +69,28 @@ export function renderInvoice(main) {
   if (stateIv.imported) renderParecer(el.querySelector('#ivParecer'), stateIv.imported, true);
 }
 
+let lastPdfFile = null;
 async function handlePdf(file, el, status) {
+  lastPdfFile = file;
+  const passWrap = el.querySelector('#ivPassWrap');
+  const password = el.querySelector('#ivPass').value.trim();
   try {
     status.textContent = 'Lendo PDF…';
     const buf = await file.arrayBuffer();
-    const text = await extractPdfText(buf);
+    const text = await extractPdfText(buf, password || undefined);
+    passWrap.classList.add('hidden');
     el.querySelector('#ivText').value = text;
     runParse(text, el, status);
   } catch (err) {
-    status.textContent = 'Falha ao ler o PDF: ' + err.message;
+    if (err.needsPassword) {
+      passWrap.classList.remove('hidden');
+      el.querySelector('#ivPass').focus();
+      status.textContent = err.wrongPassword
+        ? '✗ Senha incorreta — tente novamente.'
+        : '🔒 PDF protegido: digite a senha acima e pressione Enter.';
+    } else {
+      status.textContent = 'Falha ao ler o PDF: ' + err.message;
+    }
   }
 }
 
