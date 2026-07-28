@@ -1,7 +1,7 @@
 // views/invoice.js — importação de fatura (PDF ou texto) + parecer completo
 import * as store from '../store.js';
 import { parseStatement, extractPdfText, detectBank } from '../parsers.js';
-import { fmtBRL, fmtBRLCompact, currentYM, addMonths, ymLabel, ymLabelFull, escapeHtml, sum, groupBy, normalizeDesc, clampDay, uid, ymOf, ymDiff } from '../util.js';
+import { fmtBRL, fmtBRLCompact, currentYM, addMonths, ymLabel, ymLabelFull, escapeHtml, sum, groupBy, normalizeDesc, clampDay, uid, ymOf, ymDiff, fmtDate } from '../util.js';
 import { hBarChart, statTile } from '../charts.js';
 
 let stateIv = { items: [], bank: null, accId: null, refYM: currentYM(), imported: null };
@@ -108,7 +108,7 @@ function runParse(text, el, status) {
     include: !it.isPayment,
     categoryId: it.credit ? null : (store.suggestCategory(it.desc) || 'cat-outros'),
     dup: store.findDuplicates({ ...it, accountId: stateIv.accId }).length > 0,
-    suspect: ymOf(it.date) > stateIv.refYM || ymDiff(stateIv.refYM, ymOf(it.date)) > 2
+    suspect: !it.installment && (ymOf(it.date) > stateIv.refYM || ymDiff(stateIv.refYM, ymOf(it.date)) > 2)
   }));
   for (const it of stateIv.items) if (it.dup) it.include = false;
   renderPreview(el.querySelector('#ivPreview'), el);
@@ -171,13 +171,17 @@ function renderPreview(container, root) {
     for (const it of items) {
       if (!it.include) continue;
       const group = it.installment && it.installment.total > 1 ? uid('par') : null;
+      // parcela: a cobrança pertence ao mês desta fatura; a data original fica nas observações
+      const isParc = !!it.installment;
+      const chargeDate = isParc ? clampDay(stateIv.refYM, Number(it.date.slice(8, 10))) : it.date;
       store.addTransaction({
-        date: it.date, desc: it.desc, amount: it.amount,
+        date: chargeDate, desc: it.desc, amount: it.amount,
         type: it.credit ? 'receita' : 'despesa',
         categoryId: it.credit ? 'cat-outras-receitas' : it.categoryId,
         accountId: stateIv.accId,
         faturaYM: stateIv.refYM,
         installment: it.installment ? { group, n: it.installment.n, total: it.installment.total } : null,
+        notes: isParc && chargeDate !== it.date ? 'Compra original em ' + fmtDate(it.date) : '',
         source: 'fatura'
       });
       created++;
@@ -188,11 +192,12 @@ function renderPreview(container, root) {
           const off = k - it.installment.n;
           const ym = addMonths(stateIv.refYM, off);
           store.addTransaction({
-            date: clampDay(addMonths(it.date.slice(0, 7), off), Number(it.date.slice(8, 10))),
+            date: clampDay(ym, Number(it.date.slice(8, 10))),
             desc: it.desc, amount: it.amount, type: 'despesa',
             categoryId: it.categoryId, accountId: stateIv.accId,
             faturaYM: ym,
             installment: { group, n: k, total: it.installment.total },
+            notes: 'Compra original em ' + fmtDate(it.date),
             source: 'fatura-proj'
           });
           created++;

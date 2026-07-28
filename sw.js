@@ -1,5 +1,5 @@
 // sw.js — cache do app shell para uso offline
-const CACHE = 'finapp-v5';
+const CACHE = 'finapp-v6';
 const SHELL = [
   './', './index.html', './css/styles.css', './manifest.json',
   './js/app.js', './js/store.js', './js/github.js', './js/util.js',

@@ -1,6 +1,6 @@
 // app.js — bootstrap, navegação e sync
-export const APP_VERSION = 'v5';
-window.APP_VERSION = 'v5';
+export const APP_VERSION = 'v6';
+window.APP_VERSION = 'v6';
 import * as store from './store.js';
 import { syncNow, syncConfigured } from './github.js';
 import { debounce } from './util.js';
