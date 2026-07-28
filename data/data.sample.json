@@ -1,0 +1,34 @@
+{
+  "schema": 1,
+  "updatedAt": "2026-07-28T12:00:00.000Z",
+  "accounts": [
+    { "id": "acc-corrente", "name": "Conta Corrente", "type": "conta", "bank": "itau", "archived": false, "updatedAt": "2026-07-28T12:00:00.000Z" },
+    { "id": "acc-itau", "name": "Cartão Itaú", "type": "cartao", "bank": "itau", "closingDay": 28, "dueDay": 5, "limit": 0, "archived": false, "updatedAt": "2026-07-28T12:00:00.000Z" },
+    { "id": "acc-bradesco", "name": "Cartão Bradesco", "type": "cartao", "bank": "bradesco", "closingDay": 25, "dueDay": 2, "limit": 0, "archived": false, "updatedAt": "2026-07-28T12:00:00.000Z" },
+    { "id": "acc-c6", "name": "Cartão C6", "type": "cartao", "bank": "c6", "closingDay": 27, "dueDay": 4, "limit": 0, "archived": false, "updatedAt": "2026-07-28T12:00:00.000Z" }
+  ],
+  "categories": [
+    { "id": "cat-alimentacao", "name": "Alimentação", "kind": "despesa", "budget": 0, "archived": false, "updatedAt": "2026-07-28T12:00:00.000Z" },
+    { "id": "cat-mercado", "name": "Mercado", "kind": "despesa", "budget": 0, "archived": false, "updatedAt": "2026-07-28T12:00:00.000Z" },
+    { "id": "cat-transporte", "name": "Transporte", "kind": "despesa", "budget": 0, "archived": false, "updatedAt": "2026-07-28T12:00:00.000Z" },
+    { "id": "cat-moradia", "name": "Moradia", "kind": "despesa", "budget": 0, "archived": false, "updatedAt": "2026-07-28T12:00:00.000Z" },
+    { "id": "cat-saude", "name": "Saúde", "kind": "despesa", "budget": 0, "archived": false, "updatedAt": "2026-07-28T12:00:00.000Z" },
+    { "id": "cat-lazer", "name": "Lazer", "kind": "despesa", "budget": 0, "archived": false, "updatedAt": "2026-07-28T12:00:00.000Z" },
+    { "id": "cat-viagem", "name": "Viagem", "kind": "despesa", "budget": 0, "archived": false, "updatedAt": "2026-07-28T12:00:00.000Z" },
+    { "id": "cat-educacao", "name": "Educação", "kind": "despesa", "budget": 0, "archived": false, "updatedAt": "2026-07-28T12:00:00.000Z" },
+    { "id": "cat-assinaturas", "name": "Assinaturas", "kind": "despesa", "budget": 0, "archived": false, "updatedAt": "2026-07-28T12:00:00.000Z" },
+    { "id": "cat-vestuario", "name": "Vestuário", "kind": "despesa", "budget": 0, "archived": false, "updatedAt": "2026-07-28T12:00:00.000Z" },
+    { "id": "cat-pets", "name": "Pets", "kind": "despesa", "budget": 0, "archived": false, "updatedAt": "2026-07-28T12:00:00.000Z" },
+    { "id": "cat-impostos", "name": "Impostos e Taxas", "kind": "despesa", "budget": 0, "archived": false, "updatedAt": "2026-07-28T12:00:00.000Z" },
+    { "id": "cat-outros", "name": "Outros", "kind": "despesa", "budget": 0, "archived": false, "updatedAt": "2026-07-28T12:00:00.000Z" },
+    { "id": "cat-salario", "name": "Salário / Pró-labore", "kind": "receita", "budget": 0, "archived": false, "updatedAt": "2026-07-28T12:00:00.000Z" },
+    { "id": "cat-dividendos", "name": "Dividendos / Lucros", "kind": "receita", "budget": 0, "archived": false, "updatedAt": "2026-07-28T12:00:00.000Z" },
+    { "id": "cat-rendimentos", "name": "Rendimentos", "kind": "receita", "budget": 0, "archived": false, "updatedAt": "2026-07-28T12:00:00.000Z" },
+    { "id": "cat-outras-receitas", "name": "Outras Receitas", "kind": "receita", "budget": 0, "archived": false, "updatedAt": "2026-07-28T12:00:00.000Z" }
+  ],
+  "transactions": [],
+  "investments": [],
+  "investmentEntries": [],
+  "rules": [],
+  "settings": { "startYear": 2026 }
+}
