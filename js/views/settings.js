@@ -27,6 +27,7 @@ export function renderSettings(main) {
 
     <div class="card">
       <h2>Preferências</h2>
+      <p class="sub">FinApp <span id="appVersion"></span></p>
       <label class="field"><span>Em que mês um gasto de cartão aparece nos painéis e lançamentos?</span>
         <select id="pComp">
           <option value="compra">No mês da compra (data do gasto) — padrão</option>
@@ -61,6 +62,7 @@ export function renderSettings(main) {
   const q = (s) => el.querySelector(s);
 
   // ---- preferências ----
+  const vs = q('#appVersion'); if (vs) vs.textContent = window.APP_VERSION || '';
   q('#pComp').value = store.competenceMode();
   q('#pComp').onchange = (e) => store.setSetting('competencia', e.target.value);
 

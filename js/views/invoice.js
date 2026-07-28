@@ -1,7 +1,7 @@
 // views/invoice.js — importação de fatura (PDF ou texto) + parecer completo
 import * as store from '../store.js';
 import { parseStatement, extractPdfText, detectBank } from '../parsers.js';
-import { fmtBRL, fmtBRLCompact, currentYM, addMonths, ymLabel, ymLabelFull, escapeHtml, sum, groupBy, normalizeDesc, clampDay, uid } from '../util.js';
+import { fmtBRL, fmtBRLCompact, currentYM, addMonths, ymLabel, ymLabelFull, escapeHtml, sum, groupBy, normalizeDesc, clampDay, uid, ymOf, ymDiff } from '../util.js';
 import { hBarChart, statTile } from '../charts.js';
 
 let stateIv = { items: [], bank: null, accId: null, refYM: currentYM(), imported: null };
@@ -20,7 +20,7 @@ export function renderInvoice(main) {
       </div>
       <div class="drop" id="ivDrop">📄 Toque para escolher o <b>PDF da fatura</b> ou arraste-o aqui</div>
       <input type="file" id="ivFile" accept="application/pdf" class="hidden">
-      <label class="field hidden" id="ivPassWrap"><span>Senha do PDF (fatura protegida — a senha é usada só no seu navegador)</span>
+      <label class="field" id="ivPassWrap"><span>Senha do PDF — preencha se a fatura for protegida (a senha é usada só no seu navegador, nada é enviado)</span>
         <input id="ivPass" type="password" autocomplete="off" placeholder="geralmente CPF ou data de nascimento, conforme o banco"></label>
       <label class="field"><span>…ou cole o texto da fatura</span>
         <textarea id="ivText" rows="5" placeholder="12/06  IFOOD *RESTAURANTE   45,90&#10;15/06  MERCADO ANGELONI 02/05   199,90&#10;…"></textarea></label>
@@ -72,18 +72,15 @@ export function renderInvoice(main) {
 let lastPdfFile = null;
 async function handlePdf(file, el, status) {
   lastPdfFile = file;
-  const passWrap = el.querySelector('#ivPassWrap');
   const password = el.querySelector('#ivPass').value.trim();
   try {
     status.textContent = 'Lendo PDF…';
     const buf = await file.arrayBuffer();
     const text = await extractPdfText(buf, password || undefined);
-    passWrap.classList.add('hidden');
     el.querySelector('#ivText').value = text;
     runParse(text, el, status);
   } catch (err) {
     if (err.needsPassword) {
-      passWrap.classList.remove('hidden');
       el.querySelector('#ivPass').focus();
       status.textContent = err.wrongPassword
         ? '✗ Senha incorreta — tente novamente.'
@@ -110,7 +107,8 @@ function runParse(text, el, status) {
     ...it,
     include: !it.isPayment,
     categoryId: it.credit ? null : (store.suggestCategory(it.desc) || 'cat-outros'),
-    dup: store.findDuplicates({ ...it, accountId: stateIv.accId }).length > 0
+    dup: store.findDuplicates({ ...it, accountId: stateIv.accId }).length > 0,
+    suspect: ymOf(it.date) > stateIv.refYM || ymDiff(stateIv.refYM, ymOf(it.date)) > 2
   }));
   for (const it of stateIv.items) if (it.dup) it.include = false;
   renderPreview(el.querySelector('#ivPreview'), el);
@@ -146,10 +144,19 @@ function renderPreview(container, root) {
     row.className = 'pv-row' + (it.dup ? ' dup' : '');
     row.innerHTML = `
       <input type="checkbox" ${it.include ? 'checked' : ''}>
-      <span class="muted" style="width:44px">${it.date.slice(8, 10)}/${it.date.slice(5, 7)}</span>
-      <span class="pv-desc">${escapeHtml(it.desc)}${it.installment ? ` <span class="badge">${it.installment.n}/${it.installment.total}</span>` : ''}${it.dup ? ' <span class="warn">já existe?</span>' : ''}</span>
-      ${it.credit ? '<span class="badge gray">crédito</span>' : `<select>${cats.map((c) => `<option value="${c.id}" ${it.categoryId === c.id ? 'selected' : ''}>${escapeHtml(c.name)}</option>`).join('')}</select>`}
-      <span class="pv-amt">${it.credit ? '−' : ''}${fmtBRL(it.amount)}</span>`;
+      <div class="pv-main">
+        <div class="pv-line1">
+          <span class="pv-date muted">${it.date.slice(8, 10)}/${it.date.slice(5, 7)}</span>
+          <span class="pv-desc" title="${escapeHtml(it.desc)}">${escapeHtml(it.desc)}</span>
+          <span class="pv-amt">${it.credit ? '−' : ''}${fmtBRL(it.amount)}</span>
+        </div>
+        <div class="pv-line2">
+          ${it.installment ? `<span class="badge">parcela ${it.installment.n}/${it.installment.total}</span>` : ''}
+          ${it.dup ? '<span class="warn">já existe?</span>' : ''}
+          ${it.suspect ? '<span class="warn">⚠ data fora do período — conferir</span>' : ''}
+          ${it.credit ? '<span class="badge gray">crédito</span>' : `<select>${cats.map((c) => `<option value="${c.id}" ${it.categoryId === c.id ? 'selected' : ''}>${escapeHtml(c.name)}</option>`).join('')}</select>`}
+        </div>
+      </div>`;
     row.querySelector('input').onchange = (e) => { it.include = e.target.checked; refresh(); };
     const sel = row.querySelector('select');
     if (sel) sel.onchange = (e) => { it.categoryId = e.target.value; refresh(); };
