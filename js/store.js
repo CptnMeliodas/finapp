@@ -92,8 +92,18 @@ export function addTransaction(tx) {
   return upsert('transactions', tx);
 }
 
-// mês de competência: para cartão = mês da fatura; senão, mês da data
-export function competenceYM(tx) { return tx.faturaYM || ymOf(tx.date); }
+// modo de competência dos painéis:
+//  'compra' (padrão) → gasto conta no mês em que aconteceu (data da compra)
+//  'fatura'          → gasto de cartão conta no mês da fatura em que caiu
+export function competenceMode() { return (state.settings && state.settings.competencia) || 'compra'; }
+export function setSetting(key, value) {
+  state.settings = { ...(state.settings || {}), [key]: value };
+  persist();
+}
+export function competenceYM(tx) {
+  if (competenceMode() === 'compra') return ymOf(tx.date);
+  return tx.faturaYM || ymOf(tx.date);
+}
 
 // fatura em que uma compra cai, considerando dia de fechamento
 export function faturaYMFor(account, dateStr) {

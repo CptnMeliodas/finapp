@@ -15,7 +15,7 @@ export function renderDashboard(main) {
     </div>
     <div class="grid-tiles" id="tiles"></div>
     <div class="row-2">
-      <div class="card"><h2>Fluxo mensal</h2><p class="sub">Receitas × despesas, últimos 12 meses (competência)</p><div id="flowChart"></div></div>
+      <div class="card"><h2>Fluxo mensal</h2><p class="sub">Receitas × despesas, últimos 12 meses</p><div id="flowChart"></div></div>
       <div class="card"><h2>Despesas por categoria</h2><p class="sub">${ymLabelFull(ym)}</p><div id="catChart"></div></div>
     </div>
     <div class="row-2">

@@ -58,5 +58,14 @@ if (mergeData) {
   eq(m.settings, { y: 2, x: 1 }, 'merge: settings mesclados');
 }
 
+
+// modos de competência: compra (padrão) vs fatura
+const late = store.addTransaction({ date: '2026-06-29', desc: 'COMPRA POS-FECHAMENTO', amount: 100, type: 'despesa', categoryId: 'cat1', accountId: 'card1' });
+eq(late.faturaYM, '2026-07', 'compra dia 29 cai na fatura de julho');
+eq(store.competenceYM(late), '2026-06', "modo 'compra' (padrão): conta em junho (mês do gasto)");
+store.setSetting('competencia', 'fatura');
+eq(store.competenceYM(late), '2026-07', "modo 'fatura': conta em julho (mês da fatura)");
+store.setSetting('competencia', 'compra');
+
 console.log(`\n${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);

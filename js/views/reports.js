@@ -13,7 +13,7 @@ export function renderReports(main) {
     </div>
     <div class="card">
       <h2>Fluxo do ano</h2>
-      <p class="sub">Receitas × despesas por mês (competência)</p>
+      <p class="sub">Receitas × despesas por mês</p>
       <div id="yearChart"></div>
       <div id="yearTotals" class="mt note"></div>
     </div>

@@ -12,11 +12,11 @@ export function renderInvoice(main) {
   el.innerHTML = `
     <div class="card">
       <h2>Importar fatura do cartão</h2>
-      <p class="sub">Envie o PDF da fatura ou cole o texto (Itaú, Bradesco, C6 — ou qualquer layout com data, descrição e valor por linha).</p>
+      <p class="sub">Envie o PDF da fatura ou cole o texto (Itaú, Bradesco, C6 — ou qualquer layout com data, descrição e valor por linha). Cada compra entra nos lançamentos no mês do gasto (configurável em Ajustes).</p>
       <div class="form-grid">
         <label class="field"><span>Cartão</span>
           <select id="ivAcc">${cards.map((a) => `<option value="${a.id}" ${stateIv.accId === a.id ? 'selected' : ''}>${escapeHtml(a.name)}</option>`).join('')}</select></label>
-        <label class="field"><span>Mês da fatura (competência)</span><input id="ivYM" type="month" value="${stateIv.refYM}"></label>
+        <label class="field"><span>Mês da fatura</span><input id="ivYM" type="month" value="${stateIv.refYM}"></label>
       </div>
       <div class="drop" id="ivDrop">📄 Toque para escolher o <b>PDF da fatura</b> ou arraste-o aqui</div>
       <input type="file" id="ivFile" accept="application/pdf" class="hidden">

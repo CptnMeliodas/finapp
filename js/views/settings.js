@@ -26,6 +26,16 @@ export function renderSettings(main) {
     </div>
 
     <div class="card">
+      <h2>Preferências</h2>
+      <label class="field"><span>Em que mês um gasto de cartão aparece nos painéis e lançamentos?</span>
+        <select id="pComp">
+          <option value="compra">No mês da compra (data do gasto) — padrão</option>
+          <option value="fatura">No mês da fatura em que a compra caiu</option>
+        </select></label>
+      <p class="note">Vale para dashboard, lançamentos e relatórios. A aba Fatura sempre agrupa pela fatura do cartão, independente desta opção. Mudar aqui reclassifica tudo na hora (nada é perdido).</p>
+    </div>
+
+    <div class="card">
       <h2>Contas e cartões</h2>
       <div id="accList"></div>
       <div class="btn-row"><button class="btn small" id="accAdd">+ Adicionar</button></div>
@@ -49,6 +59,10 @@ export function renderSettings(main) {
     </div>`;
   main.appendChild(el);
   const q = (s) => el.querySelector(s);
+
+  // ---- preferências ----
+  q('#pComp').value = store.competenceMode();
+  q('#pComp').onchange = (e) => store.setSetting('competencia', e.target.value);
 
   // ---- github ----
   q('#gSave').onclick = async () => {
