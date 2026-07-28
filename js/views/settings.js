@@ -120,7 +120,7 @@ export function renderSettings(main) {
 
   // ---- backup ----
   q('#bkExport').onclick = () => {
-    downloadFile('fluxo-backup-' + nowISO().slice(0, 10) + '.json', JSON.stringify(store.getState(), null, 1), 'application/json');
+    downloadFile('finapp-backup-' + nowISO().slice(0, 10) + '.json', JSON.stringify(store.getState(), null, 1), 'application/json');
   };
   q('#bkImport').onclick = () => q('#bkFile').click();
   q('#bkFile').onchange = async () => {

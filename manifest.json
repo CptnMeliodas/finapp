@@ -1,6 +1,6 @@
 {
-  "name": "Fluxo — Finanças Pessoais",
-  "short_name": "Fluxo",
+  "name": "FinApp — Finanças Pessoais",
+  "short_name": "FinApp",
   "description": "Gerenciador de finanças pessoais com análise de fatura, parcelados e investimentos.",
   "start_url": "./index.html",
   "scope": "./",

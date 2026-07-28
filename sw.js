@@ -1,5 +1,5 @@
 // sw.js — cache do app shell para uso offline
-const CACHE = 'fluxo-v1';
+const CACHE = 'finapp-v2';
 const SHELL = [
   './', './index.html', './css/styles.css', './manifest.json',
   './js/app.js', './js/store.js', './js/github.js', './js/util.js',

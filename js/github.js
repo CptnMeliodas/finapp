@@ -45,7 +45,7 @@ async function putRemote(data, sha, message) {
   const c = getCfg();
   const path = c.ghPath || 'data/data.json';
   const body = {
-    message: message || ('fluxo: atualização ' + new Date().toISOString()),
+    message: message || ('finapp: atualização ' + new Date().toISOString()),
     content: b64encode(JSON.stringify(data, null, 1)),
     branch: c.ghBranch || 'main'
   };

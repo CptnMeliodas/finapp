@@ -1,4 +1,4 @@
-# Fluxo — Finanças Pessoais
+# FinApp — Finanças Pessoais
 
 > **Este repositório contém apenas o código do app** (nada sensível). Os dados financeiros vivem em um repositório **privado** separado (`data/data.json`), acessado pelo app em tempo de execução via API do GitHub com token restrito. App no ar via GitHub Pages.
 
